@@ -1,8 +1,6 @@
-import * as auth from "./auth-validators.js";
-import * as addon from "./addon-validators.js";
+import * as auth from "./auth-validators.js";z
 
 
 export default {
   auth,
-  addon,
 };
