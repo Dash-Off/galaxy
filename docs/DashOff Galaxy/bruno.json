@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "DashOff Galaxy",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}
