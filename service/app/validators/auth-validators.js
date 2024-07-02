@@ -1,4 +1,5 @@
 import * as yup from "yup";
+import { GENDER } from "../models/enums/index.js";
 
 export const registerUserSchema = yup.object({
   name: yup.string().required(),
