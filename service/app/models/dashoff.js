@@ -39,7 +39,7 @@ const DashOff = new mongoose.Schema({
   },
   scoreId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Score",
+    ref: "Scores",
   },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
