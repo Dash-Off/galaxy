@@ -71,3 +71,82 @@ This project is licensed under the MIT License. See the LICENSE file for details
 
 #### Contact
 For any questions or inquiries, please contact us at [support@dashoff.com].
+
+
+```mermaid
+classDiagram
+
+class User {
+  +String name
+  +String email
+  +String password
+}
+
+class DashOffType {
+  SELF
+  CHALLENGE
+}
+
+class ExtraType {
+  CHALLENGE_IMAGE
+}
+
+class extra {
+  + String ID
+  + ExtraType type
+  + String value
+}
+
+class level {
+  BASIC
+  CHARBUILD
+  TARGET
+  GENRE
+}
+
+class challenges {
+  + String ID
+  + String headline
+  + String name
+  + String duration(s)
+  + String description
+  + String level
+}
+
+class dashOff {
+  + String ID
+  + DashOffType type
+  + String title nullable
+  + String ChallengeID
+  + String content
+  + String scoreID nullable
+  + String createdAt
+  + String public default False
+}
+
+class CorrectionType {
+  VOCAB
+  READ
+  SENTI
+  GRAMMAR
+}
+
+class Correction {
+  + String ID
+  + CorrectionType type
+  + Number startPos
+  + Number endPos
+  + String replacement
+}
+
+class Scores {
+  + String ID
+  + Number overallScore
+  + Number grammarScore
+  + Number structureScore
+  + Number vocabScore
+}
+
+
+
+```
