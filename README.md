@@ -122,6 +122,7 @@ class dashOff {
   + String scoreID nullable
   + String createdAt
   + String public default False
+  + Number timing
 }
 
 class CorrectionType {
@@ -150,3 +151,54 @@ class Scores {
 
 
 ```
+
+
+
+API documentation:
+/signup
+/login
+
+
+POST /dashoff
+
+- Check the type of dashoff user needs to create
+- If dashoff is challenge:
+  check if challenge exist with the ID and user is eligible for the challenge
+  Check if already there is dashoff with similar dashoff
+    if not allow further
+    else raise challenge is already part of the user
+- Create dashoff and send ID and serializable data to user
+
+Update dashoff content
+
+- Check dashoff exist with ID and belongs to the user
+- Check if is timed, send custom error message
+- Update and send content
+
+Complete challenge
+- Trigger for evaluation
+- Get scores
+
+
+Create score
+- Normal editing from the other endpoint
+
+
+Get result
+- Send the scores and edited values
+
+
+List dashoffs
+- List of serialized dashoffs
+
+
+
+
+Admin:
+- Create challenge
+
+
+
+Text editing sources:
+https://www.cs.unm.edu/~crowley/papers/sds/sds.html
+https://www.finseth.com/craft/index.html
