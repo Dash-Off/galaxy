@@ -9,8 +9,15 @@ challenges
 */
 
 import mongoose from "mongoose";
+import autoincrement from 'mongoose-sequence';
+
+const AutoIncrement = autoincrement(mongoose)
 
 const Challenge = new mongoose.Schema({
+  order: {
+    type: Number,
+    required: true,
+  },
   name: {
     type: String,
     required: true,
@@ -43,7 +50,7 @@ const Challenge = new mongoose.Schema({
   }
 });
 
-
+Challenge.plugin(AutoIncrement, {inc_field: "order"});
 
 const ChallengeModel = mongoose.model("Challenge", Challenge);
 
