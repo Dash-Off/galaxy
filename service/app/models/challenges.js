@@ -45,8 +45,8 @@ const Challenge = new mongoose.Schema({
   }
 }, {
   timestamps: {
-    createdAt,
-    updatedAt
+    createdAt: "createdAt",
+    updatedAt: "updatedAt"
   }
 });
 

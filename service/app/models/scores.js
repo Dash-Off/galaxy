@@ -23,8 +23,8 @@ const Correction = new mongoose.Schema({
   replacement: {type: String, required: true}
 },{
   timestamps: {
-    createdAt,
-    updatedAt
+    createdAt: "createdAt",
+    updatedAt: "updatedAt"
   }
 });
 
@@ -59,8 +59,8 @@ const Scores = new mongoose.Schema({
   },
 }, {
   timestamps: {
-    createdAt,
-    updatedAt
+    createdAt: "createdAt",
+    updatedAt: "updatedAt"
   }
 });
 
