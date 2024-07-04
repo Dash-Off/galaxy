@@ -11,3 +11,7 @@ class Enum {
 }
 
 export const GENDER = new Enum(["MALE", "FEMALE", "OTHERS"]);
+export const DASHOFFTYPE = new Enum(["SELF", "CHALLENGE"])
+export const LEVEL = new Enum(["BASIC", "CHARBUILD", "TARGET", "GENRE"])
+export const EXTRA_TYPE = new Enum(["CHALLENGE_IMAGE"])
+export const CORRECTION_TYPE = new Enum(["SENTI", "READ", "GRAMMAR", "SENTENCE"])
