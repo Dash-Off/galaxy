@@ -1,19 +1,19 @@
 meta {
-  name: Login
+  name: Create Challenge DashOff
   type: http
-  seq: 2
+  seq: 4
 }
 
 post {
-  url: http://localhost:3000/api/v1/auth/login
+  url: http://localhost:3000/api/v1/challenges
   body: json
   auth: none
 }
 
 body:json {
   {
-    "username": "abc@xyz.com",
-    "password": "abcdef123"
+    "username": "abc@dashoff.com",
+    "password": "abcxyz"
   }
 }
 

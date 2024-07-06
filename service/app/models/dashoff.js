@@ -40,11 +40,11 @@ const DashOff = new mongoose.Schema({
     required: true,
     default: false,
   },
-  challengeId: {
+  challenge_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Challenge",
   },
-  scoreId: {
+  score_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Scores",
   },

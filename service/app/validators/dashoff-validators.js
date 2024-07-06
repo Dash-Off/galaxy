@@ -4,7 +4,7 @@ import { isValidObjectId } from "mongoose";
 
 // Challenge : type, challengeId, 
 export const createChallengeSchema = yup.object({
-  type: yup.string().oneOf(DASHOFFTYPE.CHALLENGE).required(),
+  type: yup.string().oneOf([DASHOFFTYPE.CHALLENGE]).required(),
   challenge_id: yup.string().required().test(
     "is-valid-object-id",
     "Challenge ID is not a valid Object ID",
