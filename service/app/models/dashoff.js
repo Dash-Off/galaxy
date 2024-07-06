@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { DASHOFFTYPE } from "./enums/index.js";
+import { DASHOFFTYPE, DASHOFF_STATUS } from "./enums/index.js";
 
 
 /*
@@ -16,10 +16,17 @@ DashOff:
 + String public default False
 
 */
+
+
 const DashOff = new mongoose.Schema({
   type: {
     type: String,
     enum: DASHOFFTYPE.getValues(),
+    required: true,
+  },
+  status: {
+    type: String,
+    enum: DASHOFF_STATUS.getValues(),
     required: true,
   },
   title: {
