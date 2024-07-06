@@ -6,6 +6,8 @@ import dashOffService from "../services/dashoff-service.js";
 import challengeService from "../services/challenge-service.js";
 import { TIMEOUT_ERROR_CODE } from "../constants.js";
 import dashoffService from "../services/dashoff-service.js";
+import userService from "../services/user-service.js";
+import scoreService from "../services/score-service.js";
 
 
 export const createChallengeDashOff = async (request, response) => {
@@ -121,6 +123,55 @@ export const list = async (request, response) => {
   }
 }
 
+const getViewModeDashOff = async (dashOff) => {
+  const owner = await userService.find(dashOff.createdBy);
+  return {
+    type: "View",
+    id: dashOff._id,
+    author: owner.name,
+    title: dashOff.title,
+    content: dashOff.content,
+  }
+}
+
+export const getDashOff = async (request, response) => {
+  try {
+    const dashOff = await dashoffService.find(request.params.id);
+    if (!dashOff) {
+      NotFound("DashOff does not exist !")
+    }
+
+    const viewMode = request.query.view;
+    if (dashOff.createdBy != request.user._id) {
+      if (dashOff.public && viewMode) {
+        let viewabledashOff = await getViewModeDashOff(dashOff);
+        setResponse(viewabledashOff, response)
+      } else {
+        NotFound("Dashoff does not exist !")
+      }
+    } else {
+      if (viewMode) {
+        let viewabledashOff = await getViewModeDashOff(dashOff);
+        setResponse(viewabledashOff, response)
+      } else {
+        let scores = {};
+        if (dashOff.score_id) {
+          scores = await scoreService.find(dashOff.score_id)
+        }
+        setResponse({
+          type: "Owner",
+          dashOff,
+          scores,
+        }, response);
+      }
+    }
+    
+  } catch(error) {
+    console.log(error);
+    setError(error, response);
+  }
+}
+
 
 export const completeDashOff = async (request, response) => {
   try{
@@ -150,4 +201,5 @@ export const completeDashOff = async (request, response) => {
     setError(e, response);
   }
 };
+
 
