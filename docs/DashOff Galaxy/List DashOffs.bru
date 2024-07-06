@@ -1,0 +1,34 @@
+meta {
+  name: List DashOffs
+  type: http
+  seq: 7
+}
+
+patch {
+  url: http://localhost:3000/api/v1/saveDashOff
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "content": "Exploring my dashoff + this and that",
+    "dash_off_id": "6688b06c19686e0c58fdb14d"
+  }
+}
+
+script:pre-request {
+  const cookie = bru.getVar("cookie");
+  
+  if(cookie) {
+    req.setHeader("Cookie", cookie)
+  }
+}
+
+script:post-response {
+  const cookies = res.getHeader('set-cookie');
+  
+  if(cookies) {
+    bru.setVar("cookie", cookies.join('; '));
+  }
+}
