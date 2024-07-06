@@ -3,3 +3,9 @@ export const NOT_FOUND_STATUS_CODE = 404;
 export const INTERNAL_SERVER_ERROR_STATUS_CODE = 500;
 export const UNAUTHORIZED_STATUS_CODE = 401;
 export const FORBIDDEN_STATUS_CODE = 403;
+
+
+
+export const BUFFER_TIME = 30;
+
+export const TIMEOUT_ERROR_CODE = "E101"

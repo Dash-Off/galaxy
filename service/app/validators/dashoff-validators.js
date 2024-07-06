@@ -18,3 +18,13 @@ export const createDashOffSchema = yup.object({
   type: yup.string().oneOf([DASHOFFTYPE.SELF]).required(),
   title: yup.string().required("Please provide a valid title"),
 });
+
+// Save DashOff : content
+export const saveDashOffSchema = yup.object({
+  dash_off_id: yup.string().required().test(
+    "is-valid-object-id",
+    "DashOff ID is not a valid Object ID",
+    value => value && isValidObjectId(value)
+  ),
+  content: yup.string().required("No content to save"),
+});

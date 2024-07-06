@@ -1,9 +1,11 @@
 import validators from "../validators/index.js";
-import {  ValidationError, validateSchema} from '../utility.js';
+import {  NotFound, ValidationError, validateSchema} from '../utility.js';
 import { setError, setResponse } from "./response-handler.js";
 import { DASHOFFTYPE, DASHOFF_STATUS } from "../models/enums/index.js";
 import dashOffService from "../services/dashoff-service.js";
+import challengeService from "../services/challenge-service.js";
 import mongoose from "mongoose";
+import { TIMEOUT_ERROR_CODE } from "../constants.js";
 
 
 export const createChallengeDashOff = async (request, response) => {
@@ -58,6 +60,47 @@ export const createSelfDashOff = async (request, response) => {
     setResponse({
       message: "Explore your writing !!",
       dashOff: selfDashOff,
+    }, response);
+  } catch(e) {
+    console.log(e);
+    setError(e, response);
+  }
+};
+
+
+export const saveDashOff = async (request, response) => {
+  try{
+    let dashOffData  = validateSchema(validators.dashOff.saveDashOffSchema, request.body);
+
+    // DashOff exists and active and timed
+    let dashOff = await dashOffService.getDashOffByUserId(request.user._id, dashOffData.dash_off_id);
+    if(!dashOff) {
+      NotFound("Dashoff not found !");
+    }
+
+    if (!dashOff.status == DASHOFF_STATUS.ACTIVE) [
+      ValidationError("Cannot edit dashoff !", {"code": TIMEOUT_ERROR_CODE})
+    ]
+
+    if (dashOff.type == DASHOFFTYPE.CHALLENGE) {
+      console.log(dashOff.challenge_id)
+      const challenge = await challengeService.find(dashOff.challenge_id);
+      if (challenge.duration) {
+        const now = Date.now();
+        const threshold = now - (challenge.duration + SAVE_DASHOFF_ADDITIONAL_THRESHOLD_SECONDS) * 1000;
+        const startTime =  new Date(dashOff.createdAt).getTime();
+        if (startTime < threshold) {
+          ValidationError("Time out cannot save any more content..")
+        }
+      }
+    }
+    
+    dashOff.content = dashOffData.content;
+    dashOff.save();
+
+    setResponse({
+      message: "Saved !",
+      dashOff,
     }, response);
   } catch(e) {
     console.log(e);
