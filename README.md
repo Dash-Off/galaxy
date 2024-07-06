@@ -160,7 +160,7 @@ API documentation:
 
 
 POST /dashoff
-
+- Check if there is current challenge going on
 - Check the type of dashoff user needs to create
 - If dashoff is challenge:
   check if challenge exist with the ID and user is eligible for the challenge
@@ -169,33 +169,42 @@ POST /dashoff
     else raise challenge is already part of the user
 - Create dashoff and send ID and serializable data to user
 
-Update dashoff content
-
+Save dashoff content
 - Check dashoff exist with ID and belongs to the user
 - Check if is timed, send custom error message
 - Update and send content
 
+Get challenges
+- Send cards data to UI
+
+
 Complete challenge
-- Trigger for evaluation
-- Get scores
+- fetch challenge
+- check challenge is active
+- Trigger for evaluation // Fake for now
+- Mark as completed
+
+Get single dashOff data
+- Check dashoff exist show view point
+- Send along with score
+- Send only content user is not the owner
+
+
+
+
+
+v2:
+Admin:
+- Create challenge
 
 
 Create score
-- Normal editing from the other endpoint
+- Create a different router
+- Get the score value from body and add to score table
 
 
-Get result
-- Send the scores and edited values
-
-
-List dashoffs
-- List of serialized dashoffs
-
-
-
-
-Admin:
-- Create challenge
+Make public show view endpoint to users
+- Share the data to users
 
 
 
