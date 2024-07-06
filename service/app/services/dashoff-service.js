@@ -39,10 +39,17 @@ const getDashOffByUserId = async (userId, dashOffId) => {
   return activeDashOff;
 }
 
+
+const getAllByUserId = async (userId) => {
+  const dashOffs = await Models.DashOff.find({createdBy: userId}).sort({createdDate: -1}).exec();
+  return dashOffs;
+}
+
 export default {
   ...genericService(Models.DashOff),
   getActiveChallenge,
   findExistingChallenge,
   getActiveSelfDashOff,
   getDashOffByUserId,
+  getAllByUserId,
 }

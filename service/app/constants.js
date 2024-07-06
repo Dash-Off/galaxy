@@ -6,6 +6,6 @@ export const FORBIDDEN_STATUS_CODE = 403;
 
 
 
-export const BUFFER_TIME = 30;
+export const SAVE_DASHOFF_ADDITIONAL_THRESHOLD_SECONDS = 30;
 
 export const TIMEOUT_ERROR_CODE = "E101"

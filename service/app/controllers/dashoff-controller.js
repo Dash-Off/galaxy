@@ -6,6 +6,7 @@ import dashOffService from "../services/dashoff-service.js";
 import challengeService from "../services/challenge-service.js";
 import mongoose from "mongoose";
 import { TIMEOUT_ERROR_CODE } from "../constants.js";
+import dashoffService from "../services/dashoff-service.js";
 
 
 export const createChallengeDashOff = async (request, response) => {
@@ -108,3 +109,12 @@ export const saveDashOff = async (request, response) => {
   }
 };
 
+export const list = async (request, response) => {
+  try {
+    const dashOffs = await dashoffService.getAllByUserId(request.user._id);
+    setResponse(dashOffs, response);
+  } catch(error) {
+    console.log(error);
+    setError(error, response);
+  }
+}
