@@ -2,10 +2,10 @@ import Models from "../models/index.js";
 import genericService from "./generic-service.js";
 import { DASHOFF_STATUS } from "../models/enums/index.js";
 
-const findExistingChallenge = async (userId, challengeId) => {
+const findExistingChallenge = async (userId, challenge_id) => {
   const challenge = await Models.DashOff.findOne({
     createdBy: userId,
-    challengeId,
+    challenge_id,
 
   }).exec();
   return challenge;
@@ -16,7 +16,7 @@ const getActiveChallenge = async (userId) => {
   const activeChallenge = await Models.DashOff.findOne({
     createdBy: userId,
     status: DASHOFF_STATUS.ACTIVE,
-    challengeId: { $ne: null, $ne: '' }
+    challenge_id: { $ne: null }
   }).exec();
   return activeChallenge;
 }
@@ -25,7 +25,7 @@ const getActiveSelfDashOff = async (userId) => {
   const activeSelfDashOff = await Models.DashOff.findOne({
     createdBy: userId,
     status: DASHOFF_STATUS.ACTIVE,
-    challengeId: { $in: [null, ''] }
+    challenge_id: { $in: [null] }
   }).exec();
   return activeSelfDashOff;
 }
@@ -45,6 +45,15 @@ const getAllByUserId = async (userId) => {
   return dashOffs;
 }
 
+
+const getAttemptedChallenge = async (userId) => {
+  const attemptedChallenges = await Models.DashOff.find({
+    createdBy: userId,
+    challenge_id: { $ne: null }
+  }).populate('challenge_id').sort("challenge_id.order").exec();
+  return attemptedChallenges;
+}
+
 export default {
   ...genericService(Models.DashOff),
   getActiveChallenge,
@@ -52,4 +61,5 @@ export default {
   getActiveSelfDashOff,
   getDashOffByUserId,
   getAllByUserId,
+  getAttemptedChallenge,
 }
