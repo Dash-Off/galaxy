@@ -1,19 +1,19 @@
 meta {
-  name: Login
+  name: List DashOffs
   type: http
-  seq: 2
+  seq: 7
 }
 
-post {
-  url: http://localhost:3000/api/v1/auth/login
+get {
+  url: http://localhost:3000/api/v1/myDashOffs
   body: json
   auth: none
 }
 
 body:json {
   {
-    "username": "abc@xyz.com",
-    "password": "abcdef123"
+    "content": "Exploring my dashoff + this and that",
+    "dash_off_id": "6688b06c19686e0c58fdb14d"
   }
 }
 

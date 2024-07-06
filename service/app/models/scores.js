@@ -10,7 +10,7 @@ Scores
 */
 
 import mongoose from "mongoose";
-import { CORRECTION_TYPE } from "./enums";
+import { CORRECTION_TYPE } from "./enums/index.js";
 
 const Correction = new mongoose.Schema({
   type: {

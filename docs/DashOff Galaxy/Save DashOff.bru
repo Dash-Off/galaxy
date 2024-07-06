@@ -1,19 +1,19 @@
 meta {
-  name: Login
+  name: Save DashOff
   type: http
-  seq: 2
+  seq: 6
 }
 
-post {
-  url: http://localhost:3000/api/v1/auth/login
+patch {
+  url: http://localhost:3000/api/v1/saveDashOff
   body: json
   auth: none
 }
 
 body:json {
   {
-    "username": "abc@xyz.com",
-    "password": "abcdef123"
+    "title": "Exploring my dashoff",
+    "type": "SELF"
   }
 }
 

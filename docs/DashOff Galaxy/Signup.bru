@@ -5,7 +5,7 @@ meta {
 }
 
 post {
-  url: http://localhost:3000/api/v1/register
+  url: http://localhost:3000/api/v1/auth/register
   body: json
   auth: none
 }
@@ -14,8 +14,6 @@ body:json {
   {
     "name": "Bhargav",
     "gender": "MALE",
-    "locationY": -12.13,
-    "locationX": 13.01,
     "email": "abc@xyz.com",
     "passwordConfirmation": "abcdef123",
     "password": "abcdef123"
