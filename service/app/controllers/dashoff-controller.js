@@ -120,3 +120,34 @@ export const list = async (request, response) => {
     setError(error, response);
   }
 }
+
+
+export const completeDashOff = async (request, response) => {
+  try{
+    let dashOffData  = validateSchema(validators.dashOff.completeDashOffSchema, request.body);
+
+    let dashOff = await dashOffService.getDashOffByUserId(request.user._id, dashOffData.dash_off_id);
+    if(!dashOff) {
+      NotFound("Dashoff not found !");
+    }
+
+    if (!dashOff.status == DASHOFF_STATUS.ACTIVE) {
+      ValidationError("DashOff is complete !")
+    }
+
+    // Trigger dashoff results endpoint
+    // Lambda integration
+    
+    dashOff.status = DASHOFF_STATUS.COMPLETED;
+    dashOff.save();
+
+    setResponse({
+      message: "Completed !",
+      dashOff,
+    }, response);
+  } catch(e) {
+    console.log(e);
+    setError(e, response);
+  }
+};
+

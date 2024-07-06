@@ -28,3 +28,12 @@ export const saveDashOffSchema = yup.object({
   ),
   content: yup.string().required("No content to save"),
 });
+
+// Save DashOff : content
+export const completeDashOffSchema = yup.object({
+  dash_off_id: yup.string().required().test(
+    "is-valid-object-id",
+    "DashOff ID is not a valid Object ID",
+    value => value && isValidObjectId(value)
+  )
+});
