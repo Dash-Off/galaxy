@@ -81,9 +81,9 @@ export const saveDashOff = async (request, response) => {
       NotFound("Dashoff not found !");
     }
 
-    if (!dashOff.status == DASHOFF_STATUS.ACTIVE) [
+    if (!dashOff.status == DASHOFF_STATUS.ACTIVE) {
       ValidationError("Cannot edit dashoff !", {"code": TIMEOUT_ERROR_CODE})
-    ]
+    }
 
     if (dashOff.type == DASHOFFTYPE.CHALLENGE) {
       console.log(dashOff.challenge_id)
