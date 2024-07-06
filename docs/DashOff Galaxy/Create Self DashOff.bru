@@ -1,0 +1,34 @@
+meta {
+  name: Create Self DashOff
+  type: http
+  seq: 5
+}
+
+post {
+  url: http://localhost:3000/api/v1/myDashOffs
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "title": "Exploring my dashoff",
+    "type": "SELF"
+  }
+}
+
+script:pre-request {
+  const cookie = bru.getVar("cookie");
+  
+  if(cookie) {
+    req.setHeader("Cookie", cookie)
+  }
+}
+
+script:post-response {
+  const cookies = res.getHeader('set-cookie');
+  
+  if(cookies) {
+    bru.setVar("cookie", cookies.join('; '));
+  }
+}

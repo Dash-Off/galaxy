@@ -36,3 +36,32 @@ export const createChallengeDashOff = async (request, response) => {
   }
 };
 
+
+export const createSelfDashOff = async (request, response) => {
+  try{
+    let selfDashOffData  = validateSchema(validators.dashOff.createDashOffSchema, request.body);
+
+    /*
+    *** Enable when you need to avoid multiple dashoff******
+    const activeDashOff = await dashOffService.getActiveSelfDashOff(request.user._id);
+    if (activeDashOff) {
+      ValidationError("Complete active challenge !")
+    }
+    */
+    const selfDashOff = await dashOffService.save({
+      type: DASHOFFTYPE.SELF,
+      title: selfDashOffData.title,
+      status: DASHOFF_STATUS.ACTIVE,
+      createdBy: request.user._id,
+      modifiedBy: request.user._id,
+    });
+    setResponse({
+      message: "Explore your writing !!",
+      dashOff: selfDashOff,
+    }, response);
+  } catch(e) {
+    console.log(e);
+    setError(e, response);
+  }
+};
+

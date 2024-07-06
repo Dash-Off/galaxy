@@ -21,8 +21,18 @@ const getActiveChallenge = async (userId) => {
   return activeChallenge;
 }
 
+const getActiveSelfDashOff = async (userId) => {
+  const activeSelfDashOff = await Models.DashOff.findOne({
+    createdBy: userId,
+    status: DASHOFF_STATUS.ACTIVE,
+    challengeId: { $in: [null, ''] }
+  }).exec();
+  return activeSelfDashOff;
+}
+
 export default {
   ...genericService(Models.DashOff),
   getActiveChallenge,
   findExistingChallenge,
+  getActiveSelfDashOff,
 }
