@@ -81,8 +81,8 @@ export const saveDashOff = async (request, response) => {
       NotFound("Dashoff not found !");
     }
 
-    if (!dashOff.status == DASHOFF_STATUS.ACTIVE) {
-      ValidationError("Cannot edit dashoff !", {"code": TIMEOUT_ERROR_CODE})
+    if (dashOff.status !== DASHOFF_STATUS.ACTIVE) {
+      ValidationError("Cannot edit dashoff !")
     }
 
     if (dashOff.type == DASHOFFTYPE.CHALLENGE) {
@@ -93,7 +93,7 @@ export const saveDashOff = async (request, response) => {
         const threshold = now - (challenge.duration + SAVE_DASHOFF_ADDITIONAL_THRESHOLD_SECONDS) * 1000;
         const startTime =  new Date(dashOff.createdAt).getTime();
         if (startTime < threshold) {
-          ValidationError("Time out cannot save any more content..")
+          ValidationError("Time out cannot save any more content..", {"code": TIMEOUT_ERROR_CODE})
         }
       }
     }
