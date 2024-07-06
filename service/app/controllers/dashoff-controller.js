@@ -4,7 +4,6 @@ import { setError, setResponse } from "./response-handler.js";
 import { DASHOFFTYPE, DASHOFF_STATUS } from "../models/enums/index.js";
 import dashOffService from "../services/dashoff-service.js";
 import challengeService from "../services/challenge-service.js";
-import mongoose from "mongoose";
 import { TIMEOUT_ERROR_CODE } from "../constants.js";
 import dashoffService from "../services/dashoff-service.js";
 
@@ -22,9 +21,11 @@ export const createChallengeDashOff = async (request, response) => {
       ValidationError("You are already part of this challenge !")
     }
 
+    const challenge = await challengeService.find(challengeData.challenge_id)
+
     const challengeDashOff = await dashOffService.save({
       type: DASHOFFTYPE.CHALLENGE,
-      challenge_id: new mongoose.Types.ObjectId(challengeData.challenge_id),
+      challenge_id: challenge._id,
       status: DASHOFF_STATUS.ACTIVE,
       createdBy: request.user._id,
       modifiedBy: request.user._id,
@@ -32,6 +33,7 @@ export const createChallengeDashOff = async (request, response) => {
     setResponse({
       message: "Unlocked challenge!",
       dashOff: challengeDashOff,
+      challenge,
     }, response);
   } catch(e) {
     console.log(e);
