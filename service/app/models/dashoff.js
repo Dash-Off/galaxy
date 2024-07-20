@@ -32,7 +32,10 @@ const DashOff = new mongoose.Schema({
   title: {
     type: String,
   },
-  content: {
+  raw: {
+    type: String,
+  },
+  markup: {
     type: String,
   },
   public: {

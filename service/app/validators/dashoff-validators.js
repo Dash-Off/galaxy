@@ -26,7 +26,8 @@ export const saveDashOffSchema = yup.object({
     "DashOff ID is not a valid Object ID",
     value => value && isValidObjectId(value)
   ),
-  content: yup.string().required("No content to save"),
+  markup: yup.string().required("No content to save"),
+  raw: yup.string().required("Raw text is required"),
 });
 
 // Save DashOff : content
