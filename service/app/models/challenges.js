@@ -41,7 +41,7 @@ const Challenge = new mongoose.Schema({
   },
   duration: {
     type: Number,
-    default: 0, // In seconds
+    default: -1, // In seconds
   }
 }, {
   timestamps: {
