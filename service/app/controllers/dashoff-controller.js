@@ -4,7 +4,7 @@ import { setError, setResponse } from "./response-handler.js";
 import { DASHOFFTYPE, DASHOFF_STATUS } from "../models/enums/index.js";
 import dashOffService from "../services/dashoff-service.js";
 import challengeService from "../services/challenge-service.js";
-import { TIMEOUT_ERROR_CODE } from "../constants.js";
+import { SAVE_DASHOFF_ADDITIONAL_THRESHOLD_SECONDS, TIMEOUT_ERROR_CODE } from "../constants.js";
 import dashoffService from "../services/dashoff-service.js";
 import userService from "../services/user-service.js";
 import scoreService from "../services/score-service.js";
@@ -92,15 +92,17 @@ export const saveDashOff = async (request, response) => {
       const challenge = await challengeService.find(dashOff.challenge_id);
       if (challenge.duration) {
         const now = Date.now();
-        const threshold = now - (challenge.duration + SAVE_DASHOFF_ADDITIONAL_THRESHOLD_SECONDS) * 1000;
+        const threshold = now - ((challenge.duration + SAVE_DASHOFF_ADDITIONAL_THRESHOLD_SECONDS) * 1000);
         const startTime =  new Date(dashOff.createdAt).getTime();
+        //console.log(startTime, threshold)
         if (startTime < threshold) {
           ValidationError("Time out cannot save any more content..", {"code": TIMEOUT_ERROR_CODE})
         }
       }
     }
     
-    dashOff.content = dashOffData.content;
+    dashOff.raw = dashOffData.raw;
+    dashOff.markup = dashOffData.markup;
     dashOff.save();
 
     setResponse({
@@ -130,19 +132,31 @@ const getViewModeDashOff = async (dashOff) => {
     id: dashOff._id,
     author: owner.name,
     title: dashOff.title,
-    content: dashOff.content,
+    raw: dashOff.raw,
+    markup: dashOff.markup,
+  }
+}
+
+const getDashOffInfo = (dashOff, challenge, scores) => {
+  return {
+    type: "Owner",
+    dashOff,
+    challenge,
+    scores,
   }
 }
 
 export const getDashOff = async (request, response) => {
   try {
+    console.log(request.params.id)
     const dashOff = await dashoffService.find(request.params.id);
     if (!dashOff) {
+      console.log("No dashoff")
       NotFound("DashOff does not exist !")
     }
 
     const viewMode = request.query.view;
-    if (dashOff.createdBy != request.user._id) {
+    if (!dashOff.createdBy.equals(request.user._id)) {
       if (dashOff.public && viewMode) {
         let viewabledashOff = await getViewModeDashOff(dashOff);
         setResponse(viewabledashOff, response)
@@ -155,14 +169,17 @@ export const getDashOff = async (request, response) => {
         setResponse(viewabledashOff, response)
       } else {
         let scores = {};
+        let challenge = {};
         if (dashOff.score_id) {
           scores = await scoreService.find(dashOff.score_id)
         }
-        setResponse({
-          type: "Owner",
-          dashOff,
-          scores,
-        }, response);
+        if (dashOff.type === DASHOFFTYPE.CHALLENGE) {
+          challenge = await challengeService.find(dashOff.challenge_id)
+        }
+        setResponse(
+          getDashOffInfo(dashOff, challenge, scores),
+          response
+        );
       }
     }
     
