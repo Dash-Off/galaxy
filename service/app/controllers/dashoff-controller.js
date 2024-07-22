@@ -124,12 +124,17 @@ export const updateDashOff = async (request, response) => {
     if(!dashOff) {
       NotFound("Dashoff not found !");
     }
-
-    if (dashOff.status !== DASHOFF_STATUS.ACTIVE) {
-      ValidationError("Cannot update dashoff !")
+    if (dashOffData.status) {
+      if (dashOff.status !== DASHOFF_STATUS.ACTIVE) {
+        ValidationError("Cannot update dashoff !")
+      }
+      
+      dashOff.status = dashOffData.status;
+    }
+    if (dashOffData.public !== undefined) {
+      dashOff.public = !!dashOffData.public;
     }
     
-    dashOff.status = dashOffData.status;
     dashOff.save();
 
     setResponse({

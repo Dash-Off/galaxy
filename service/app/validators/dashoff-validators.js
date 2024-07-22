@@ -36,7 +36,8 @@ export const updateDashOffSchema = yup.object({
     "DashOff ID is not a valid Object ID",
     value => value && isValidObjectId(value)
   ),
-  status: yup.string().oneOf([DASHOFF_STATUS.EXPIRED, DASHOFF_STATUS.COMPLETED]).required(),
+  status: yup.string().oneOf([DASHOFF_STATUS.EXPIRED, DASHOFF_STATUS.COMPLETED]),
+  public: yup.boolean(),
 });
 
 // Save DashOff : content
