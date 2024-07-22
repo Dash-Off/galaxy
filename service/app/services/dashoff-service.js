@@ -6,7 +6,7 @@ const findExistingChallenge = async (userId, challenge_id) => {
   const challenge = await Models.DashOff.findOne({
     createdBy: userId,
     challenge_id,
-
+    status: {$ne: DASHOFF_STATUS.EXPIRED}
   }).exec();
   return challenge;
 }

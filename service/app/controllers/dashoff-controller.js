@@ -115,6 +115,33 @@ export const saveDashOff = async (request, response) => {
   }
 };
 
+export const updateDashOff = async (request, response) => {
+  try{
+    let dashOffData  = validateSchema(validators.dashOff.updateDashOffSchema, request.body);
+
+    // DashOff exists and active and timed
+    let dashOff = await dashOffService.getDashOffByUserId(request.user._id, dashOffData.dash_off_id);
+    if(!dashOff) {
+      NotFound("Dashoff not found !");
+    }
+
+    if (dashOff.status !== DASHOFF_STATUS.ACTIVE) {
+      ValidationError("Cannot update dashoff !")
+    }
+    
+    dashOff.status = dashOffData.status;
+    dashOff.save();
+
+    setResponse({
+      message: "Updated status !",
+      dashOff,
+    }, response);
+  } catch(e) {
+    console.log(e);
+    setError(e, response);
+  }
+};
+
 export const list = async (request, response) => {
   try {
     const dashOffs = await dashoffService.getAllByUserId(request.user._id);
