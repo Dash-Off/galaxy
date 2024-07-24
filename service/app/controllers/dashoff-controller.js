@@ -9,6 +9,7 @@ import dashoffService from "../services/dashoff-service.js";
 import userService from "../services/user-service.js";
 import scoreService from "../services/score-service.js";
 import { ADMIN_USER_ID } from '../../config.js';
+import { evaluateDashOff } from "../async-client/processor.js";
 
 
 export const createChallengeDashOff = async (request, response) => {
@@ -236,10 +237,15 @@ export const completeDashOff = async (request, response) => {
       ValidationError("DashOff is complete !")
     }
 
-    // Trigger dashoff results endpoint
-    // Lambda integration
-    
+    try {
+      await evaluateDashOff(dashOff._id, dashOff.raw);
+    } catch (e) {
+      // Do not throw error as the job can be pushed anytime later so do not fail the request
+      console.error("Failed to send evaluation job....");
+    }
+
     dashOff.status = DASHOFF_STATUS.COMPLETED;
+    dashOff.modifiedBy = request.user._id;
     dashOff.save();
 
     setResponse({
