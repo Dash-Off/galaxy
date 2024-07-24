@@ -26,8 +26,8 @@ export const saveDashOffSchema = yup.object({
     "DashOff ID is not a valid Object ID",
     value => value && isValidObjectId(value)
   ),
-  markup: yup.string().required("No content to save"),
-  raw: yup.string().required("Raw text is required"),
+  markup: yup.string(),
+  raw: yup.string(),
 });
 
 export const updateDashOffSchema = yup.object({
@@ -47,4 +47,27 @@ export const completeDashOffSchema = yup.object({
     "DashOff ID is not a valid Object ID",
     value => value && isValidObjectId(value)
   )
+});
+
+const suggestionSchema =  yup.object({
+    replacement: yup.string(),
+    pos: yup.number(),
+    actual: yup.string(),
+    correctionSubType: yup.string(),
+}).notRequired();
+
+const correctionSchema = yup.object({
+  correctionType: yup.string().required(),
+  suggestion: suggestionSchema,
+  line: yup.string().required(),
+  actual: yup.string().required()
+})
+
+// Save scores
+export const resultSchema = yup.object({
+  overallScore: yup.number().required(),
+  grammarScore: yup.number().required(),
+  structureScore: yup.number().required(),
+  vocabScore: yup.number().required(),
+  corrections: yup.array().of(correctionSchema),
 });

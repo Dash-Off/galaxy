@@ -8,6 +8,7 @@ import { SAVE_DASHOFF_ADDITIONAL_THRESHOLD_SECONDS, TIMEOUT_ERROR_CODE } from ".
 import dashoffService from "../services/dashoff-service.js";
 import userService from "../services/user-service.js";
 import scoreService from "../services/score-service.js";
+import { ADMIN_USER_ID } from '../../config.js';
 
 
 export const createChallengeDashOff = async (request, response) => {
@@ -244,6 +245,35 @@ export const completeDashOff = async (request, response) => {
     setResponse({
       message: "Completed !",
       dashOff,
+    }, response);
+  } catch(e) {
+    console.log(e);
+    setError(e, response);
+  }
+};
+
+
+
+export const postResult = async (request, response) => {
+  try{
+    let resultData  = validateSchema(validators.dashOff.resultSchema, request.body);
+
+    let dashOff = await dashOffService.find(request.params.id);
+    if(!dashOff) {
+      NotFound("Dashoff not found !");
+    }
+
+    if (DASHOFF_STATUS.COMPLETED !== dashOff.status) {
+      ValidationError("DashOff is not complete !")
+    }
+
+    const score = await scoreService.save({...resultData, createdBy: ADMIN_USER_ID, modifiedBy: ADMIN_USER_ID});
+    dashOff.score_id = score._id
+    dashOff.status = DASHOFF_STATUS.EVALUATED;
+    dashOff.save();
+
+    setResponse({
+      message: "Results Updated !",
     }, response);
   } catch(e) {
     console.log(e);
