@@ -49,7 +49,8 @@ const getAllByUserId = async (userId) => {
 const getAttemptedChallenge = async (userId) => {
   const attemptedChallenges = await Models.DashOff.find({
     createdBy: userId,
-    challenge_id: { $ne: null }
+    challenge_id: { $ne: null },
+    status: { $ne: DASHOFF_STATUS.EXPIRED },
   }).populate('challenge_id').sort("challenge_id.order").exec();
   return attemptedChallenges;
 }
