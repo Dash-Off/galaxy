@@ -13,18 +13,20 @@ const formatChallengeCards = (challenges, nextChallenge) => {
       name: challenge.challenge_id.name,
       headline: challenge.challenge_id.headline,
       description: challenge.challenge_id.description,
+      dash_off_id: challenge.id,
       challenge_id: challenge.challenge_id._id,
       duration: challenge.challenge_id.duration,
-      status: challenge.challenge_id.status,
+      status: challenge.status,
+      created_at: challenge.createdAt,
     })
   }
   if (nextChallenge) {
     cards.push({
       order: nextChallenge.order,
       name: nextChallenge.name,
-      headline: nextChallenge.headline,
       challenge_id: nextChallenge._id,
       locked: DASHOFF_STATUS.ACTIVE == challenge.status, // Lock if the last challenge is active
+      headline: DASHOFF_STATUS.ACTIVE == challenge.status ? "": nextChallenge.headline,// Do not send headline if locked
     })
   }
   return cards;
