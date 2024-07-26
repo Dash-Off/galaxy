@@ -240,6 +240,7 @@ export const completeDashOff = async (request, response) => {
     try {
       await evaluateDashOff(dashOff._id, dashOff.raw);
     } catch (e) {
+      console.error(e)
       // Do not throw error as the job can be pushed anytime later so do not fail the request
       console.error("Failed to send evaluation job....");
     }
