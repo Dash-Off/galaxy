@@ -41,7 +41,7 @@ const getDashOffByUserId = async (userId, dashOffId) => {
 
 
 const getAllByUserId = async (userId) => {
-  const dashOffs = await Models.DashOff.find({createdBy: userId}).sort({createdDate: -1}).exec();
+  const dashOffs = await Models.DashOff.find({createdBy: userId, status: {$ne: DASHOFF_STATUS.EXPIRED}}).sort({createdDate: -1}).exec();
   return dashOffs;
 }
 
