@@ -16,11 +16,11 @@ export const validateInterAuthRequest = (req) => {
   const ipAddress = req.ip || req.connection.remoteAddress;
   const body = req.body || {};
   const whitelistIps = (process.env.WHITELIST_IPS || "").split(",");
-  if (!Object.keys(headers).includes("X_AUTH") || whitelistIps.includes(ipAddress)) {
+  if (!Object.keys(headers).includes("X-AUTH") || whitelistIps.includes(ipAddress)) {
     console.log(`Client IP: ${ipAddress}`);
     return false;
   }
-  return headers["X_AUTH"] == getSignature(body)
+  return headers["X-AUTH"] == getSignature(body)
 
 }
 
@@ -44,7 +44,7 @@ export const requestEvaluation = async (dashOffId, rawText) => {
     `${process.env.EVAL_APP_HOST}/api/v1/get_scores`,
     payload,
     {headers: {
-      "X_AUTH": getSignature(payload)
+      "X-AUTH": getSignature(payload)
     }}).then(({data}) => {
       console.log(data.message);
   }).catch(e => {
