@@ -10,12 +10,12 @@ import errorHandler from './middlewares/error-handler.js';
 const corswhitelist = (process.env.CORS_ORIGINS || "http://localhost:5173").split(",");
 function corsOptionsDelegate(req, callback) {
   var corsOptions;
-  if (corswhitelist.indexOf(req.headers['Origin'] || "") !== -1) {
+  if (corswhitelist.indexOf(req.headers['origin'] || "") !== -1) {
     corsOptions = { origin: true }
   } else {
     corsOptions = { origin: false }
   }
-  console.log(req.headers);
+  console.log(req.headers['origin']);
   console.log(corsOptions);
   callback(null, corsOptions) // callback expects two parameters: error and options
 };
