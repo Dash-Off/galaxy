@@ -9,7 +9,7 @@ import dashoffService from "../services/dashoff-service.js";
 import userService from "../services/user-service.js";
 import scoreService from "../services/score-service.js";
 import { ADMIN_USER_ID } from '../../config.js';
-import { requestEvaluation, validateInterAuthRequest, validateRequest } from "../async-client/processor.js";
+import { requestEvaluation, validateInterAuthRequest } from "../async-client/processor.js";
 
 
 export const createChallengeDashOff = async (request, response) => {
