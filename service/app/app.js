@@ -15,11 +15,10 @@ const initalize = (app) => {
   app.use(cors({
     credentials: true,
     origin: function(origin, callback) {
-      if (corswhitelist.indexOf(origin) !== -1) {
+      if (corswhitelist.indexOf(origin) !== -1 /*|| !origin*/) {
         callback(null, true);
       } else {
-        callback(new Error('Not allowed by CORS'));
-        // callback(null, false);
+        callback(null, false);
       }
     }
   }));
