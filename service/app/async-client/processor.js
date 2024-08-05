@@ -4,7 +4,7 @@ import crypto from 'crypto';
 import axios from "axios";
 
 const getSignature  = (payload) => {
-  const signedString = 'signed,';
+  let signedString = 'signed,';
   Object.keys(payload).forEach(k => signedString += `${k},`);
 
   const hmac = crypto.createHmac('sha256', process.env.APP_SECRET).update(signedString).digest('hex');
