@@ -4,13 +4,27 @@ import { PASSCODE } from '../config.js';
 import Models from './models/index.js';
 import bodyParser from "body-parser";
 
-const initAuth = (app) => {
-  app.use(bodyParser.urlencoded({extended:true})); 
-  app.use(session({ 
+const getSession = () => {
+  const isProd = process.env.RENDER;
+  const session = { 
     secret : PASSCODE, 
     resave : false, 
-    saveUninitialized : false
-}));
+    saveUninitialized : false,
+  };
+  if (isProd) {
+    session.cookie = {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'None',
+      maxAge: 4 * 24 * 60 * 60 * 1000 // 4 days expiry
+    }
+  }
+  return session;
+}
+
+const initAuth = (app) => {
+  app.use(bodyParser.urlencoded({extended:true})); 
+  app.use(session(getSession()));
   app.use(passport.initialize()); 
   app.use(passport.session()); 
   passport.use(Models.User.createStrategy());
