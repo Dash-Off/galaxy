@@ -7,6 +7,16 @@ import { DASHOFF_STATUS } from "../models/enums/index.js";
 const formatChallengeCards = (challenges, nextChallenge) => {
   const cards = []
   let challenge = {}
+  if (nextChallenge) {
+    challenge = challenges.length ? challenges[0] : {};
+    cards.push({
+      order: nextChallenge.order,
+      name: nextChallenge.name,
+      challenge_id: nextChallenge._id,
+      locked: challenge.status ? DASHOFF_STATUS.ACTIVE == challenge.status : true, // Lock if the last challenge is active
+      headline: challenge.status && DASHOFF_STATUS.ACTIVE == challenge.status ? "": nextChallenge.headline,// Do not send headline if locked
+    })
+  }
   for(challenge of challenges) {
     cards.push({
       order: challenge.challenge_id.order,
@@ -20,15 +30,7 @@ const formatChallengeCards = (challenges, nextChallenge) => {
       created_at: challenge.createdAt,
     })
   }
-  if (nextChallenge) {
-    cards.push({
-      order: nextChallenge.order,
-      name: nextChallenge.name,
-      challenge_id: nextChallenge._id,
-      locked: DASHOFF_STATUS.ACTIVE == challenge.status, // Lock if the last challenge is active
-      headline: DASHOFF_STATUS.ACTIVE == challenge.status ? "": nextChallenge.headline,// Do not send headline if locked
-    })
-  }
+
   return cards;
   
 }
@@ -40,7 +42,7 @@ export const listUserChallenges = async (request, response) => {
     let lastAttemptedChallengeOrder = 0;
     if (attemptedChallenges.length) {
       attemptedChallenges.sort((a,b) => b.challenge_id.order - a.challenge_id.order)
-      lastAttemptedChallengeOrder = attemptedChallenges[attemptedChallenges.length - 1].challenge_id.order;
+      lastAttemptedChallengeOrder = attemptedChallenges[0].challenge_id.order;
     }
     
     const nextChallenge = await challengeService.getByOrderId(lastAttemptedChallengeOrder + 1);
