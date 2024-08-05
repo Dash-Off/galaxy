@@ -7,13 +7,20 @@ import Models from './models/index.js';
 import initalizeAuthentication from './initalize-authentication.js';
 import errorHandler from './middlewares/error-handler.js';
 
-const initalize = (app) => {
-  app.use(cors(
-    {
-      credentials: true,
-      origin: "http://localhost:5173",
+const corswhitelist = (process.env.CORS_ORIGINS || "http://localhost:5173").split(",");
+var corsOptionsDelegate = function (req, callback) {
+  var corsOptions;
+  if (corswhitelist.indexOf(req.header('Origin')) !== -1) {
+    corsOptions = { origin: true }
+  } else {
+    corsOptions = { origin: false }
   }
-  ));
+  callback(null, corsOptions) // callback expects two parameters: error and options
+};
+
+
+const initalize = (app) => {
+  app.use(corsOptionsDelegate);
   app.use(express.json());
   app.use(express.urlencoded());
   mongoose.connect(process.env.MONGO_CONNECTION);
