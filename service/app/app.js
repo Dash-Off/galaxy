@@ -20,7 +20,7 @@ function corsOptionsDelegate(req, callback) {
 
 
 const initalize = (app) => {
-  app.use(corsOptionsDelegate);
+  app.use(cors(corsOptionsDelegate));
   app.use(express.json());
   app.use(express.urlencoded());
   mongoose.connect(process.env.MONGO_CONNECTION);
