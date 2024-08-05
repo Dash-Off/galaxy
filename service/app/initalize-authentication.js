@@ -15,7 +15,8 @@ const getSession = () => {
     session.cookie = {
       httpOnly: false,
       secure: true,
-      sameSite: 'None',
+      sameSite: 'none',
+      path: '/',
       maxAge: 4 * 24 * 60 * 60 * 1000 // 4 days expiry
     }
   }
@@ -28,6 +29,7 @@ const initAuth = (app) => {
   app.use(session(getSession()));
   app.use(passport.initialize()); 
   app.use(passport.session()); 
+  app.enable('trust proxy');
   passport.use(Models.User.createStrategy());
   passport.serializeUser(Models.User.serializeUser()); 
   passport.deserializeUser(Models.User.deserializeUser()); 
