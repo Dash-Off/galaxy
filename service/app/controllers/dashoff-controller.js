@@ -1,5 +1,5 @@
 import validators from "../validators/index.js";
-import {  NotFound, ValidationError, validateSchema} from '../utility.js';
+import {  NotFound, Unauthorized, ValidationError, validateSchema} from '../utility.js';
 import { setError, setResponse } from "./response-handler.js";
 import { DASHOFFTYPE, DASHOFF_STATUS } from "../models/enums/index.js";
 import dashOffService from "../services/dashoff-service.js";
@@ -9,7 +9,7 @@ import dashoffService from "../services/dashoff-service.js";
 import userService from "../services/user-service.js";
 import scoreService from "../services/score-service.js";
 import { ADMIN_USER_ID } from '../../config.js';
-import { evaluateDashOff } from "../async-client/processor.js";
+import { requestEvaluation, validateInterAuthRequest, validateRequest } from "../async-client/processor.js";
 
 
 export const createChallengeDashOff = async (request, response) => {
@@ -237,13 +237,8 @@ export const completeDashOff = async (request, response) => {
       ValidationError("DashOff is complete !")
     }
 
-    try {
-      await evaluateDashOff(dashOff._id, dashOff.raw);
-    } catch (e) {
-      console.error(e)
-      // Do not throw error as the job can be pushed anytime later so do not fail the request
-      console.error("Failed to send evaluation job....");
-    }
+
+    await requestEvaluation(dashOff._id, dashOff.raw);
 
     dashOff.status = DASHOFF_STATUS.COMPLETED;
     dashOff.modifiedBy = request.user._id;
@@ -263,6 +258,9 @@ export const completeDashOff = async (request, response) => {
 
 export const postResult = async (request, response) => {
   try{
+    if (!validateInterAuthRequest(request)) {
+      Unauthorized(`Unauthorized access !`);
+    }
     let resultData  = validateSchema(validators.dashOff.resultSchema, request.body);
 
     let dashOff = await dashOffService.find(request.params.id);
