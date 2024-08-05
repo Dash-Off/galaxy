@@ -13,13 +13,13 @@ const getSession = () => {
   };
   if (isProd) {
     session.cookie = {
-      httpOnly: true,
+      httpOnly: false,
       secure: true,
       sameSite: 'None',
       maxAge: 4 * 24 * 60 * 60 * 1000 // 4 days expiry
     }
   }
-  console.log(session)
+
   return session;
 }
 
