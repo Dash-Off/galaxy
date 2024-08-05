@@ -41,7 +41,7 @@ export const evaluateDashOff = async (dashOffId, rawText) => {
 export const requestEvaluation = async (dashOffId, rawText) => {
   const payload = {dashOffId, raw: rawText}
   return axios.post(
-    `${process.env.APP_SECRET}/api/v1/get_scores`,
+    `${process.env.EVAL_APP_HOST}/api/v1/get_scores`,
     payload,
     {headers: {
       "X_AUTH": getSignature(payload)
