@@ -6,7 +6,7 @@ const findExistingChallenge = async (userId, challenge_id) => {
   const challenge = await Models.DashOff.findOne({
     createdBy: userId,
     challenge_id,
-
+    status: {$ne: DASHOFF_STATUS.EXPIRED}
   }).exec();
   return challenge;
 }
@@ -41,7 +41,7 @@ const getDashOffByUserId = async (userId, dashOffId) => {
 
 
 const getAllByUserId = async (userId) => {
-  const dashOffs = await Models.DashOff.find({createdBy: userId}).sort({createdDate: -1}).exec();
+  const dashOffs = await Models.DashOff.find({createdBy: userId, status: {$ne: DASHOFF_STATUS.EXPIRED}}).sort({createdDate: -1}).exec();
   return dashOffs;
 }
 
@@ -49,7 +49,8 @@ const getAllByUserId = async (userId) => {
 const getAttemptedChallenge = async (userId) => {
   const attemptedChallenges = await Models.DashOff.find({
     createdBy: userId,
-    challenge_id: { $ne: null }
+    challenge_id: { $ne: null },
+    status: { $ne: DASHOFF_STATUS.EXPIRED },
   }).populate('challenge_id').sort("challenge_id.order").exec();
   return attemptedChallenges;
 }

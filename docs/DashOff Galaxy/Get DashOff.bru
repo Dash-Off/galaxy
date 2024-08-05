@@ -1,20 +1,19 @@
 meta {
-  name: Save DashOff
+  name: Get DashOff
   type: http
-  seq: 6
+  seq: 9
 }
 
-patch {
-  url: http://localhost:3000/api/v1/saveDashOff
+get {
+  url: http://localhost:3000/api/v1/myDashOffs/6688b08319686e0c58fdb150
   body: json
   auth: none
 }
 
 body:json {
   {
-    "dash_off_id": "Exploring my dashoff",
-    "raw": "SELF",
-    "markup": "<span>SELF</span>"
+    "content": "Exploring my dashoff + this and that",
+    "dash_off_id": "6688b06c19686e0c58fdb14d"
   }
 }
 

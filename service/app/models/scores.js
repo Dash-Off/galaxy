@@ -10,23 +10,9 @@ Scores
 */
 
 import mongoose from "mongoose";
-import { CORRECTION_TYPE } from "./enums/index.js";
+import { CORRECTION_SUB_TYPE, CORRECTION_TYPE } from "./enums/index.js";
 
-const Correction = new mongoose.Schema({
-  type: {
-    type: String,
-    enum: CORRECTION_TYPE,
-    required: true
-  },
-  startPos: {type: Number, required: true},
-  endPos: {type: Number, required: true},
-  replacement: {type: String, required: true}
-},{
-  timestamps: {
-    createdAt: "createdAt",
-    updatedAt: "updatedAt"
-  }
-});
+
 
 
 const Scores = new mongoose.Schema({
@@ -46,7 +32,26 @@ const Scores = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  corrections: [Correction],
+  corrections: [
+    {
+      correctionType: {
+        type: String,
+        enum: CORRECTION_TYPE.getValues(),
+        required: true
+      },
+      suggestion: {
+        type: {
+          replacement: {type: String},
+          pos: {type: Number},
+          actual: {type: String},
+          correctionSubType: {type: String, enum: CORRECTION_SUB_TYPE.getValues()}
+        },
+        required: false,
+      },
+      line: {type: Number, required: true},
+      actual: {type: String, required: true},
+    }
+  ],
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",

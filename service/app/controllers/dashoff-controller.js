@@ -1,13 +1,15 @@
 import validators from "../validators/index.js";
-import {  NotFound, ValidationError, validateSchema} from '../utility.js';
+import {  NotFound, Unauthorized, ValidationError, validateSchema} from '../utility.js';
 import { setError, setResponse } from "./response-handler.js";
 import { DASHOFFTYPE, DASHOFF_STATUS } from "../models/enums/index.js";
 import dashOffService from "../services/dashoff-service.js";
 import challengeService from "../services/challenge-service.js";
-import { TIMEOUT_ERROR_CODE } from "../constants.js";
+import { SAVE_DASHOFF_ADDITIONAL_THRESHOLD_SECONDS, TIMEOUT_ERROR_CODE } from "../constants.js";
 import dashoffService from "../services/dashoff-service.js";
 import userService from "../services/user-service.js";
 import scoreService from "../services/score-service.js";
+import { ADMIN_USER_ID } from '../../config.js';
+import { requestEvaluation, validateInterAuthRequest, validateRequest } from "../async-client/processor.js";
 
 
 export const createChallengeDashOff = async (request, response) => {
@@ -90,21 +92,55 @@ export const saveDashOff = async (request, response) => {
     if (dashOff.type == DASHOFFTYPE.CHALLENGE) {
       console.log(dashOff.challenge_id)
       const challenge = await challengeService.find(dashOff.challenge_id);
-      if (challenge.duration) {
+      if (challenge.duration && challenge.duration !== -1) {
         const now = Date.now();
-        const threshold = now - (challenge.duration + SAVE_DASHOFF_ADDITIONAL_THRESHOLD_SECONDS) * 1000;
+        const threshold = now - ((challenge.duration + SAVE_DASHOFF_ADDITIONAL_THRESHOLD_SECONDS) * 1000);
         const startTime =  new Date(dashOff.createdAt).getTime();
+        //console.log(startTime, threshold)
         if (startTime < threshold) {
           ValidationError("Time out cannot save any more content..", {"code": TIMEOUT_ERROR_CODE})
         }
       }
     }
     
-    dashOff.content = dashOffData.content;
+    dashOff.raw = dashOffData.raw;
+    dashOff.markup = dashOffData.markup;
     dashOff.save();
 
     setResponse({
       message: "Saved !",
+      dashOff,
+    }, response);
+  } catch(e) {
+    console.log(e);
+    setError(e, response);
+  }
+};
+
+export const updateDashOff = async (request, response) => {
+  try{
+    let dashOffData  = validateSchema(validators.dashOff.updateDashOffSchema, request.body);
+
+    // DashOff exists and active and timed
+    let dashOff = await dashOffService.getDashOffByUserId(request.user._id, dashOffData.dash_off_id);
+    if(!dashOff) {
+      NotFound("Dashoff not found !");
+    }
+    if (dashOffData.status) {
+      if (dashOff.status !== DASHOFF_STATUS.ACTIVE) {
+        ValidationError("Cannot update dashoff !")
+      }
+      
+      dashOff.status = dashOffData.status;
+    }
+    if (dashOffData.public !== undefined) {
+      dashOff.public = !!dashOffData.public;
+    }
+    
+    dashOff.save();
+
+    setResponse({
+      message: "Updated status !",
       dashOff,
     }, response);
   } catch(e) {
@@ -130,19 +166,31 @@ const getViewModeDashOff = async (dashOff) => {
     id: dashOff._id,
     author: owner.name,
     title: dashOff.title,
-    content: dashOff.content,
+    raw: dashOff.raw,
+    markup: dashOff.markup,
+  }
+}
+
+const getDashOffInfo = (dashOff, challenge, scores) => {
+  return {
+    type: "Owner",
+    dashOff,
+    challenge,
+    scores,
   }
 }
 
 export const getDashOff = async (request, response) => {
   try {
+    console.log(request.params.id)
     const dashOff = await dashoffService.find(request.params.id);
     if (!dashOff) {
+      console.log("No dashoff")
       NotFound("DashOff does not exist !")
     }
 
     const viewMode = request.query.view;
-    if (dashOff.createdBy != request.user._id) {
+    if (!dashOff.createdBy.equals(request.user._id)) {
       if (dashOff.public && viewMode) {
         let viewabledashOff = await getViewModeDashOff(dashOff);
         setResponse(viewabledashOff, response)
@@ -155,14 +203,17 @@ export const getDashOff = async (request, response) => {
         setResponse(viewabledashOff, response)
       } else {
         let scores = {};
+        let challenge = {};
         if (dashOff.score_id) {
           scores = await scoreService.find(dashOff.score_id)
         }
-        setResponse({
-          type: "Owner",
-          dashOff,
-          scores,
-        }, response);
+        if (dashOff.type === DASHOFFTYPE.CHALLENGE) {
+          challenge = await challengeService.find(dashOff.challenge_id)
+        }
+        setResponse(
+          getDashOffInfo(dashOff, challenge, scores),
+          response
+        );
       }
     }
     
@@ -186,15 +237,48 @@ export const completeDashOff = async (request, response) => {
       ValidationError("DashOff is complete !")
     }
 
-    // Trigger dashoff results endpoint
-    // Lambda integration
-    
+
+    await requestEvaluation(dashOff._id, dashOff.raw);
+
     dashOff.status = DASHOFF_STATUS.COMPLETED;
+    dashOff.modifiedBy = request.user._id;
     dashOff.save();
 
     setResponse({
       message: "Completed !",
       dashOff,
+    }, response);
+  } catch(e) {
+    console.log(e);
+    setError(e, response);
+  }
+};
+
+
+
+export const postResult = async (request, response) => {
+  try{
+    if (!validateInterAuthRequest(request)) {
+      Unauthorized(`Unauthorized access !`);
+    }
+    let resultData  = validateSchema(validators.dashOff.resultSchema, request.body);
+
+    let dashOff = await dashOffService.find(request.params.id);
+    if(!dashOff) {
+      NotFound("Dashoff not found !");
+    }
+
+    if (DASHOFF_STATUS.COMPLETED !== dashOff.status) {
+      ValidationError("DashOff is not complete !")
+    }
+
+    const score = await scoreService.save({...resultData, createdBy: ADMIN_USER_ID, modifiedBy: ADMIN_USER_ID});
+    dashOff.score_id = score._id
+    dashOff.status = DASHOFF_STATUS.EVALUATED;
+    dashOff.save();
+
+    setResponse({
+      message: "Results Updated !",
     }, response);
   } catch(e) {
     console.log(e);

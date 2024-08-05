@@ -9,7 +9,7 @@ router.route('/challenges').post(dashOffController.createChallengeDashOff).get(c
 router.route('/myDashOffs').post(dashOffController.createSelfDashOff).get(dashOffController.list);
 router.route('/saveDashOff').patch(dashOffController.saveDashOff);
 router.route('/completeDashOff').patch(dashOffController.completeDashOff);
-router.route('/myDashOffs/:id').get(dashOffController.getDashOff);
+router.route('/myDashOffs/:id').get(dashOffController.getDashOff).patch(dashOffController.updateDashOff);
 
 
 export default router;

@@ -40,7 +40,7 @@ const updateById = (Model) => async(id, update) => {
  * @returns {Promise}
  */
 const find = (Model) => async (id) => {
-  const model = Model.findById(id).exec();
+  const model = await Model.findById(id).exec();
   return model;
 }
 
