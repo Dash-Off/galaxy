@@ -19,6 +19,7 @@ const getSession = () => {
       maxAge: 4 * 24 * 60 * 60 * 1000 // 4 days expiry
     }
   }
+  console.log(session)
   return session;
 }
 
