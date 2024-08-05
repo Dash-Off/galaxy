@@ -92,7 +92,7 @@ export const saveDashOff = async (request, response) => {
     if (dashOff.type == DASHOFFTYPE.CHALLENGE) {
       console.log(dashOff.challenge_id)
       const challenge = await challengeService.find(dashOff.challenge_id);
-      if (challenge.duration) {
+      if (challenge.duration && challenge.duration !== -1) {
         const now = Date.now();
         const threshold = now - ((challenge.duration + SAVE_DASHOFF_ADDITIONAL_THRESHOLD_SECONDS) * 1000);
         const startTime =  new Date(dashOff.createdAt).getTime();
