@@ -15,6 +15,8 @@ function corsOptionsDelegate(req, callback) {
   } else {
     corsOptions = { origin: false }
   }
+  console.log(corswhitelist);
+  console.log(corsOptions);
   callback(null, corsOptions) // callback expects two parameters: error and options
 };
 
