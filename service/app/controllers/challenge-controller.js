@@ -13,8 +13,8 @@ const formatChallengeCards = (challenges, nextChallenge) => {
       order: nextChallenge.order,
       name: nextChallenge.name,
       challenge_id: nextChallenge._id,
-      locked: challenge.status ? DASHOFF_STATUS.ACTIVE == challenge.status : true, // Lock if the last challenge is active
-      headline: challenge.status && DASHOFF_STATUS.ACTIVE == challenge.status ? "": nextChallenge.headline,// Do not send headline if locked
+      locked: DASHOFF_STATUS.ACTIVE == challenge.status, // Lock if the last challenge is active
+      headline: DASHOFF_STATUS.ACTIVE == challenge.status ? "": nextChallenge.headline,// Do not send headline if locked
     })
   }
   for(challenge of challenges) {
