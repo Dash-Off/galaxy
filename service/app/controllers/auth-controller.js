@@ -65,12 +65,17 @@ export const login = (req, res, next) =>  {
       setError(err, res);
     } 
     else { 
-        if (!user) { 
-          console.log("Invalid credentials", info);
+        if (!user) {
           next(Unauthorized("Invalid credentials provided !"));
         } 
-        else { 
-          setResponse({message: "Login Successful !"}, res);
+        else {
+          req.login(user, (error) => {
+            if (error) {
+              next(error);
+            } else {
+              setResponse({message: "Login Successful !"}, res);
+            }
+          });
         }
     } 
   })(req, res);
