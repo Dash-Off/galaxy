@@ -48,32 +48,33 @@ export const logout = (req, response, next) => {
 
 export const login = (req, res, next) =>  {
   try {
-  
-  const userToBeChecked = new Models.User({ 
-    username: req.body.username, 
-    password: req.body.password, 
-  }); 
-  
-  req.login(userToBeChecked, function (err) { 
-    if (err) {
-      console.log("Failed to authenticate user", err);
-      Unauthorized("Failed to authenticate user");
-    } else { 
-      passport.authenticate("local")( 
-        req, res, function () { 
-          Models.User.find({username: req.user.username}).then(
-            () => {
-              // Login is successful
-              setResponse({message: "Login Successful !"}, res);
-            }
-          ).catch((err) => {
-            console.log("Invalid credentials", err);
-            Unauthorized("Invalid credentials provided !", {}, false);
-          })
-          
-      }); 
+  if(!(req.body && req.body.username)) {
+    ValidationError("User name is required!")
+  }
+  if(!(req.body && req.body.password)) {
+    ValidationError("Password is required!")
+  }
+
+  req.body = {
+    username: req.body.username,
+    password: req.body.password
+  }
+
+  passport.authenticate("local", function (err, user, info) { 
+    if (err) { 
+      setError(err, res);
     } 
-  }); 
+    else { 
+        if (!user) { 
+          console.log("Invalid credentials", info);
+          next(Unauthorized("Invalid credentials provided !"));
+        } 
+        else { 
+          setResponse({message: "Login Successful !"}, res);
+        }
+    } 
+  })(req, res);
+  
 } catch(e) {
   console.log(e);
   setError(e, res);

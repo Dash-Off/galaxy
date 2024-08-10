@@ -3,6 +3,7 @@ import passport from 'passport';
 import { PASSCODE } from '../config.js';
 import Models from './models/index.js';
 import bodyParser from "body-parser";
+import { Strategy } from "passport-local";
 
 const getSession = () => {
   const isProd = process.env.RENDER;
@@ -30,9 +31,9 @@ const initAuth = (app) => {
   app.use(passport.initialize()); 
   app.use(passport.session()); 
   app.enable('trust proxy');
-  passport.use(Models.User.createStrategy());
   passport.serializeUser(Models.User.serializeUser()); 
   passport.deserializeUser(Models.User.deserializeUser()); 
+  passport.use(new Strategy(Models.User.authenticate()));
 };
 
 export default initAuth;
