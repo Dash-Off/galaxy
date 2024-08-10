@@ -20,7 +20,7 @@ export const updateUserSchema = yup.object({
   password: yup.string()
         .min(8, 'Password is too short - should be 8 chars minimum.')
         .matches(
-          /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/,
+          /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]).{8,}$/,
           'Minimum eight characters, at least one letter and one number'
         ),
 });
