@@ -55,6 +55,7 @@ export const login = (req, res, next) =>  {
   
   req.login(userToBeChecked, function (err) { 
     if (err) {
+      console.log("Failed to authenticate user", err);
       Unauthorized("Failed to authenticate user");
     } else { 
       passport.authenticate("local")( 
