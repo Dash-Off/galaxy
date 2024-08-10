@@ -47,6 +47,7 @@ export const logout = (req, response, next) => {
 
 
 export const login = (req, res, next) =>  {
+  try {
   
   const userToBeChecked = new Models.User({ 
     username: req.body.username, 
@@ -66,12 +67,17 @@ export const login = (req, res, next) =>  {
               setResponse({message: "Login Successful !"}, res);
             }
           ).catch((err) => {
-            next(Unauthorized("Invalid credentials provided !", {}, false));
+            console.log("Invalid credentials", err);
+            Unauthorized("Invalid credentials provided !", {}, false);
           })
           
       }); 
     } 
   }); 
+} catch(e) {
+  console.log(e);
+  setError(e, res);
+}
 };
 
 
