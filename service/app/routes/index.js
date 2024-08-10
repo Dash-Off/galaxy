@@ -4,8 +4,8 @@ import adminRouter from './admin-routes.js';
 import userRouter from './user-routes.js';
 
 const initalizeRoutes = (app) => {
-  app.use("/api/v1/auth", authRouter);
-  app.use("/api/v1/admin", adminRouter);
+  app.use("/api/v1/auth/", authRouter);
+  app.use("/api/v1/admin/", adminRouter);
   app.use('/api/v1/eval/', basicRouter);
   app.use('/api/v1/', userRouter);
 }
