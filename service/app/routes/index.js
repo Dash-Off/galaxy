@@ -12,6 +12,7 @@ const initalizeRoutes = (app) => {
   app.get('/status', async (req, res) => {
     try {
     await axios.get(process.env.SCHEDULER);
+    console.log("Heart beats...")
     res.json({
       status: 'OK',
       message: 'Server is running',
